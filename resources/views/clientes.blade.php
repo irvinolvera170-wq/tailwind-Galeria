@@ -1,86 +1,133 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clientes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-    <h1>Registro de clientes</h1>
+<body class="bg-light">
 
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <p style="color: red;">{{ $error }}</p>
-        @endforeach
-    @endif
+    <div class="container mt-4">
 
-    <h2>Registrar cliente</h2>
+        <h1 class="text-success text-center mb-4">Registro de clientes</h1>
 
-    <form action="/clientes" method="POST">
-        @csrf
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                @foreach ($errors->all() as $error)
+                    <p class="mb-1">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
 
-        <label>Nombre:</label>
-        <input type="text" name="nombre" required>
-        <br><br>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Registrar cliente</h4>
+            </div>
 
-        <label>Correo:</label>
-        <input type="email" name="email" required>
-        <br><br>
+            <div class="card-body">
+                <form action="/clientes" method="POST">
+                    @csrf
 
-        <label>Dirección:</label>
-        <input type="text" name="direccion" required>
-        <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre:</label>
+                        <input type="text" name="nombre" class="form-control"
+                               value="{{ old('nombre') }}" required>
+                    </div>
 
-        <label>Teléfono:</label>
-        <input type="text" name="telefono" maxlength="20" required>
-        <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Correo electrónico:</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ old('email') }}" required>
+                    </div>
 
-        <button type="submit">Guardar cliente</button>
-    </form>
+                    <div class="mb-3">
+                        <label class="form-label">Dirección:</label>
+                        <input type="text" name="direccion" class="form-control"
+                               value="{{ old('direccion') }}" required>
+                    </div>
 
-    <hr>
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono:</label>
+                        <input type="text" name="telefono" class="form-control"
+                               maxlength="20" value="{{ old('telefono') }}" required>
+                    </div>
 
-    <h2>Clientes registrados</h2>
+                    <button type="submit" class="btn btn-success">
+                        Guardar cliente
+                    </button>
+                </form>
+            </div>
+        </div>
 
-    @if ($clientes->isEmpty())
-        <p>No hay clientes registrados.</p>
-    @else
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Dirección</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
-            </tr>
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">Clientes registrados</h4>
+            </div>
 
-            @foreach ($clientes as $cliente)
-                <tr>
-                    <td>{{ $cliente->id }}</td>
-                    <td>{{ $cliente->nombre }}</td>
-                    <td>{{ $cliente->email }}</td>
-                    <td>{{ $cliente->direccion }}</td>
-                    <td>{{ $cliente->telefono }}</td>
-                    <td>
-                        <a href="/clientes/{{ $cliente->id }}/editar">Editar</a>
+            <div class="card-body">
+                @if ($clientes->isEmpty())
+                    <div class="alert alert-info">
+                        No hay clientes registrados.
+                    </div>
+                @else
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover align-middle">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Dirección</th>
+                                    <th>Teléfono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
 
-                        <form action="/clientes/{{ $cliente->id }}"
-                              method="POST"
-                              style="display:inline;"
-                              onsubmit="return confirm('¿Seguro que quieres eliminar este cliente?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-    @endif
+                            <tbody>
+                                @foreach ($clientes as $cliente)
+                                    <tr>
+                                        <td>{{ $cliente->id }}</td>
+                                        <td>{{ $cliente->nombre }}</td>
+                                        <td>{{ $cliente->email }}</td>
+                                        <td>{{ $cliente->direccion }}</td>
+                                        <td>{{ $cliente->telefono }}</td>
+                                        <td>
+                                            <a href="/clientes/{{ $cliente->id }}/editar"
+                                               class="btn btn-warning btn-sm mb-1">
+                                                Editar
+                                            </a>
 
-    <br>
-    <a href="/productos">Ir a productos</a>
+                                            <form action="/clientes/{{ $cliente->id }}"
+                                                  method="POST"
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('¿Seguro que quieres eliminar este cliente?')">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit" class="btn btn-danger btn-sm mb-1">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="text-center mt-4 mb-4">
+            <a href="/productos" class="btn btn-primary">Ir a productos</a>
+            <a href="/ventas" class="btn btn-dark">Ir a ventas</a>
+        </div>
+
+    </div>
 
 </body>
 </html>
